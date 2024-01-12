@@ -110,8 +110,17 @@
     use:styleable={$component.styles}  
   >
     {#if label}
-      <label for="superCell" class="superlabel" class:bound={formContext}>
-        {label}
+      <label for="superCell"
+        class="superlabel"
+        style:flex-direction={labelPos == "left" ? "column" : "row"}
+
+      >
+        {label} 
+        {#if fieldState.error}
+          <div class="error">
+            <span>{fieldState.error}</span>
+          </div>
+        {/if}
       </label>
     {/if}
 
@@ -145,20 +154,17 @@
       {/if}
     </div>
 
-    {#if fieldState.error}
-      <div class="error">
-        <span>{fieldState.error}</span>
-      </div>
-    {/if}
+
     
   </div>
 </Block>
 
 <style>
   .superField {
+    flex: auto;
+    width: 100%;
     display: flex;
     align-items: stretch;
-    justify-content: stretch;
     min-width: 0;
   }
 
@@ -167,7 +173,7 @@
   }
   .superlabel {
     display: flex;
-    align-items: flex-start;
+    justify-content: space-between;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -182,8 +188,14 @@
   .inline-cells {
     flex: 1;
     display: flex;
-    justify-items: stretch;
+    justify-content: stretch;
     height: 2rem;
+  }
+
+  .error {
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--spectrum-global-color-red-700);
   }
 </style>
 

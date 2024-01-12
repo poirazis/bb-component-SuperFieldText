@@ -6,6 +6,7 @@
     "friendlyName": "Super Field - Text",
     "description": "A Text Input Field component for Budibase",
     "icon": "ABC",
+    "requiredAncestors": ["form"],
     "block" : true,
     "ejectable" : false,
     "context" : [
