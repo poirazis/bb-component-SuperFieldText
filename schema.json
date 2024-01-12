@@ -6,6 +6,20 @@
     "friendlyName": "Super Field - Text",
     "description": "A Text Input Field component for Budibase",
     "icon": "ABC",
+    "block" : true,
+    "ejectable" : false,
+    "context" : [
+      {
+        "type": "static",
+        "values": [
+          {
+            "label": "Value",
+            "key": "value",
+            "type": "string"
+          } 
+        ]
+      }
+    ],
     "settings": [
       {
         "type": "field/string",
@@ -21,8 +35,7 @@
       {
         "type": "text",
         "label": "Placeholder",
-        "key": "placeholder",
-        "placeholder": "Choose an option"
+        "key": "placeholder"
       },
       {
         "type": "text",
@@ -32,8 +45,22 @@
       },
       {
         "type": "text",
+        "label": "Formatted value",
+        "key": "template",
+        "placeholder" : "{{ Value }}",
+        "supportsConditions": false,
+        "nested" : true
+      },
+      {
+        "type": "text",
         "label": "Help text",
         "key": "helpText"
+      },
+      {
+        "type": "text",
+        "label": "Input Mask",
+        "key": "mask",
+        "hidden" : true
       },
       {
         "type": "validation/string",
@@ -53,6 +80,20 @@
       },
       {
         "type": "boolean",
+        "label": "Debounced",
+        "key": "debounced",
+        "defaultValue": false
+      },
+      {
+        "type": "number",
+        "label": "Debounce Delay (ms)",
+        "key": "debounceDelay",
+        "minValue" : "200",
+        "defaultValue": 500,
+        "dependsOn": "debounced"
+      },
+      {
+        "type": "boolean",
         "label": "Disabled",
         "key": "disabled",
         "defaultValue": false
@@ -69,24 +110,42 @@
         }
       },
       {
-        "type": "select",
-        "label": "Type",
-        "key": "controlType",
-        "defaultValue": "select",
-        "placeholder": "Pick an options type",
-        "options": [
-          {
-            "label": "Select",
-            "value": "select"
-          },
-          {
-            "label": "Checkboxes",
-            "value": "checkbox"
-          },
-          {
-            "label": "Switches",
-            "value": "switch"
-          }
+        "type" : "boolean",
+        "key"  : "clearValueIcon",
+        "label": "Clear Value Icon"
+      },
+      {
+        "type" : "boolean",
+        "key"  : "showIcon",
+        "label": "Add Inline Icon"
+      },
+      {
+        "type" : "icon",
+        "key"  : "icon",
+        "label": "Icon",
+        "resetOn" : "showIcon",
+        "dependsOn" : "showIcon"
+      },
+      {
+        "type" : "boolean",
+        "key"  : "customButtons",
+        "label": "Add Buttons"
+      },
+      {
+        "type" : "buttonConfiguration",
+        "key"  : "buttons",
+        "nested" : true,
+        "dependsOn" : "customButtons"
+      },
+      {
+        "tag" : "style",
+        "type" : "select",
+        "key" : "mode",
+        "label" : "Mode",
+        "defaultValue": "formInput",
+        "options" : [
+          { "label" : "Form Input", "value" : "formInput" },
+          { "label" : "Inline Input", "value" : "inlineInput" }
         ]
       },
       {
