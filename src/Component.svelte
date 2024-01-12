@@ -67,10 +67,12 @@
       defaultValue,
       disabled,
       template,
+      padding: "0.85rem",
       readonly: readonly || disabled,
       icon,
       debounce: debounced ? debounceDelay : false,
       clearValueIcon,
+      error: fieldState.error,
       role: "formInput", 
     }
 
@@ -182,33 +184,6 @@
     display: flex;
     justify-items: stretch;
     height: 2rem;
-  }
-  .warning {
-    color: var(--spectrum-global-color-red-500);
-    border-color: var(--spectrum-global-color-red-500);
-  }
-
-  .spectrum-ActionButton--quiet.warning {
-    color: var(--spectrum-global-color-red-500);
-    border: none;
-  }
-
-  .warning:hover {
-    color: #000;
-    background-color: var(--spectrum-global-color-red-500);
-  }
-  .cta {
-    color: #fff;
-    background-color: var(--primaryColor);
-  }
-
-  .disabled {
-    color: var(--spectrum-global-color-gray-600);
-    background-color: var(--spectrum-global-color-gray-200);
-  }
-
-  .superlabel.bound {
-    gap: 0.5rem;
   }
 </style>
 
