@@ -1,8 +1,8 @@
 <script>
   import { getContext , onDestroy} from "svelte";
-  import { SuperCell } from "../../bb_super_components_shared/src/lib"
+  import CellString from "../../bb_super_components_shared/src/lib/SuperCell/cells/CellString.svelte";
 
-  const { styleable, builderStore, componentStore } = getContext("sdk");
+  const { styleable, Block, BlockComponent, Provider } = getContext("sdk");
   const component = getContext("component");
 
   const formContext = getContext("form");
@@ -12,28 +12,27 @@
   const formApi = formContext?.formApi;
 
   export let field;
-  export let controlType
   
   export let customButtons
 
-  export let frontButtons = [];
-  export let frontButtonsQuiet;
-  export let frontButtonsGrouping;
-  export let frontButtonsSelected = [0];
   export let buttons = [];
   export let buttonsQuiet;
-  export let buttonsGrouping;
-  export let buttonsSelected = [0];
 
-  export let fieldLabel;
+  export let label;
   export let span = 6;
-  export let inForm = false;
   export let placeholder
   export let defaultValue
+  export let template
   export let disabled
   export let readonly
+  export let validation
 
-  export let frontIcon
+  export let onChange
+  export let debounced
+  export let debounceDelay
+
+  export let icon
+  export let clearValueIcon
 
   let formField;
   let formStep;
@@ -48,11 +47,11 @@
 
   $: formField = formApi?.registerField(
     field,
-    "array",
+    "string",
     defaultValue,
     disabled,
     readonly,
-    null,
+    validation,
     formStep
   )
 
@@ -63,24 +62,17 @@
   });
 
   $: value = fieldState?.value ? fieldState.value : defaultValue
-
-  $: {
-    if (
-      $builderStore.inBuilder &&
-      $componentStore.selectedComponentPath?.includes($component.id) &&
-      formContext &&
-      !inForm
-    ) {
-      builderStore.actions.updateProp("inForm", true);
-    } else if (
-      $builderStore.inBuilder &&
-      $componentStore.selectedComponentPath?.includes($component.id) &&
-      inForm &&
-      !formContext
-    ) {
-      builderStore.actions.updateProp("inForm", false);
+  $: cellOptions = { 
+      placeholder, 
+      defaultValue,
+      disabled,
+      template,
+      readonly: readonly || disabled,
+      icon,
+      debounce: debounced ? debounceDelay : false,
+      clearValueIcon,
+      role: "formInput", 
     }
-  }
 
   $: $component.styles = {
     ...$component.styles,
@@ -94,105 +86,71 @@
     },
   };
   
-  const buttonClick = (group, idx) => {
-    if (group == "front" && frontButtonsGrouping == "single") {
-      frontButtonsSelected = [idx];
-    } else if (group == "end" && buttonsGrouping == "single") {
-      buttonsSelected = [idx];
-    }
-
-    if (group == "front" && frontButtonsGrouping == "multi") {
-      let i = frontButtonsSelected.indexOf(idx);
-      if (i > -1) frontButtonsSelected.splice(i, 1);
-      else frontButtonsSelected.push(idx);
-
-      frontButtonsSelected = frontButtonsSelected;
-    } else if (group == "end" && buttonsGrouping == "multi") {
-      buttonsSelected = [idx];
-    }
-  };
+  const handleChange = ( newValue ) => {
+    onChange?.({value: newValue});
+    fieldApi?.setValue(newValue);
+  }
 
   onDestroy(() => {
     fieldApi?.deregister()
     unsubscribe?.()
   })
+
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-<div
-  class="superField"
-  on:focus={cellState.focus} 
-  tabindex="0"
-  use:styleable={$component.styles}  
->
-  <label for="superCell" class="superFieldLabel" class:bound={formContext}>
-    {fieldLabel || field || "Unamed Field"}
-  </label>
-  
-  <div class="inline-cells">
-    {#if customButtons && frontButtons?.length}
-      <div
-        class="spectrum-ActionGroup spectrum-ActionGroup--compact spectrum-ActionGroup--sizeM"
-        class:spectrum-ActionGroup--quiet={frontButtonsQuiet}
-      >
-        {#each frontButtons as button, idx}
-          <button
-            on:click={(e) => buttonClick("front", idx)}
-            class="spectrum-ActionButton spectrum-ActionButton--sizeM"
-            class:spectrum-ActionButton--quiet={frontButtonsQuiet ||
-              button.quiet}
-            class:warning={button.type == "warning"}
-            class:cta={button.type == "cta"}
-            class:disabled={button.disabled}
-            class:is-selected={frontButtonsGrouping &&
-              frontButtonsSelected.includes(idx)}
-          >
-            <span class="spectrum-ActionButton-label">{@html button?.text}</span
-            >
-          </button>
-        {/each}
-      </div>
+<Block>
+  <div
+    class="superField"
+    on:focus={cellState.focus} 
+    tabindex="0"
+    use:styleable={$component.styles}  
+  >
+    {#if label}
+      <label for="superCell" class="superlabel" class:bound={formContext}>
+        {label}
+      </label>
     {/if}
 
-    <SuperCell
-      bind:cellState
-      cellOptions={{ 
-        placeholder, 
-        defaultValue,
-        controlType,
-        role: "formInput", 
-        iconFront: frontIcon,
-        }}
-      {value}
-      {fieldSchema}
-      editable
-      on:change={(e) => fieldApi?.setValue(e.detail)}
-      on:blur={cellState.lostFocus}
-    />
+    <div class="inline-cells">
+      <CellString
+        bind:cellState
+        {cellOptions}
+        {value}
+        {fieldSchema}
+        on:change={(e) => handleChange(e.detail)}
+        on:blur={cellState.lostFocus}
+      />
+      {#if customButtons && buttons?.length}
+        <div
+          class="spectrum-ActionGroup spectrum-ActionGroup--compact spectrum-ActionGroup--sizeM"
+          class:spectrum-ActionGroup--quiet={buttonsQuiet}
+        >
+          <Provider data={ {value}} >
+            {#each buttons as { text, onClick }}
+              <BlockComponent
+                type = "plugin/bb-component-SuperButton"
+                props = {{
+                  size: "M",
+                  text,
+                  onClick
+                }}>
+                </BlockComponent>
+              {/each}
+          </Provider>
+        </div>
+      {/if}
+    </div>
 
-    {#if customButtons && buttons?.length}
-      <div
-        class="spectrum-ActionGroup spectrum-ActionGroup--compact spectrum-ActionGroup--sizeM"
-        class:spectrum-ActionGroup--quiet={buttonsQuiet}
-      >
-        {#each buttons as button, idx}
-          <button
-            class="spectrum-ActionButton spectrum-ActionButton--sizeM"
-            on:click={(e) => buttonClick("end", idx)}
-            class:spectrum-ActionButton--quiet={buttonsQuiet || button.quiet}
-            class:warning={button.type == "warning"}
-            class:cta={button.type == "cta"}
-            class:disabled={button.disabled}
-            class:is-selected={buttonsGrouping && buttonsSelected.includes(idx)}
-          >
-            <span class="spectrum-ActionButton-label">{button.text}</span>
-          </button>
-        {/each}
+    {#if fieldState.error}
+      <div class="error">
+        <span>{fieldState.error}</span>
       </div>
     {/if}
+    
   </div>
-</div>
+</Block>
 
 <style>
   .superField {
@@ -205,7 +163,7 @@
   .superField:focus {
     outline: none;
   }
-  .superFieldLabel {
+  .superlabel {
     display: flex;
     align-items: flex-start;
     overflow: hidden;
@@ -213,7 +171,7 @@
     white-space: nowrap;
     min-width: var(--label-width);
     max-width: var(--label-width);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.75rem;
     font-weight: 400;
     color: var(--spectrum-global-color-gray-700);
@@ -249,7 +207,7 @@
     background-color: var(--spectrum-global-color-gray-200);
   }
 
-  .superFieldLabel.bound {
+  .superlabel.bound {
     gap: 0.5rem;
   }
 </style>
