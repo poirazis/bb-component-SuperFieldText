@@ -32,6 +32,7 @@
   export let debounceDelay
 
   export let icon
+  export let suggestions
   export let clearValueIcon
 
   let formField;
@@ -67,7 +68,8 @@
       defaultValue,
       disabled,
       template,
-      padding: "0.85rem",
+      suggestions,
+      padding: "0.5rem",
       readonly: readonly || disabled,
       icon,
       debounce: debounced ? debounceDelay : false,
@@ -81,8 +83,8 @@
     normal: {
       ...$component.styles.normal,
       "flex-direction": labelPos == "left" ? "row" : "column",
-      gap: labelPos == "left" ? "0.85rem" : "0rem",
-      "grid-column": labelPos ? "span " + span : null,
+      gap: labelPos == "left" ? "0.5rem" : "0rem",
+      "grid-column": labelPos ? "span " + span : "span 1",
       "--label-width":
         labelPos == "left" ? (labelWidth ? labelWidth : "6rem") : "auto",
     },
@@ -194,7 +196,7 @@
 
   .error {
     font-size: 12px;
-    line-height: 20px;
+    line-height: 1.75rem;
     color: var(--spectrum-global-color-red-700);
   }
 </style>
