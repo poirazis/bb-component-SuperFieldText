@@ -86,6 +86,13 @@
         "defaultValue": false
       },
       {
+        "type": "boolean",
+        "label": "Suggestions",
+        "key": "showSuggestions",
+        "hidden" : true,
+        "defaultValue": false
+      },
+      {
         "type": "number",
         "label": "Debounce Delay (ms)",
         "key": "debounceDelay",
