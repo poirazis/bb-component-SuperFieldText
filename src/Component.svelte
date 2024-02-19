@@ -1,6 +1,6 @@
 <script>
   import { getContext , onDestroy} from "svelte";
-  import CellString from "../../bb_super_components_shared/src/lib/SuperCell/cells/CellString.svelte";
+  import CellString from "../../bb_super_components_shared/src/lib/SuperTableCells/CellString.svelte";
 
   const { styleable, Block, BlockComponent, Provider } = getContext("sdk");
   const component = getContext("component");
@@ -107,8 +107,6 @@
 <Block>
   <div
     class="superField"
-    on:focus={cellState.focus} 
-    tabindex="0"
     use:styleable={$component.styles}  
   >
     {#if label}
@@ -128,12 +126,10 @@
 
     <div class="inline-cells">
       <CellString
-        bind:cellState
         {cellOptions}
         {value}
         {fieldSchema}
         on:change={(e) => handleChange(e.detail)}
-        on:blur={cellState.lostFocus}
       />
       {#if customButtons && buttons?.length}
         <div
