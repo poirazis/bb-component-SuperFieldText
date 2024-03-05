@@ -2,13 +2,14 @@
   import { getContext , onDestroy} from "svelte";
   import CellString from "../../bb_super_components_shared/src/lib/SuperTableCells/CellString.svelte";
 
-  const { styleable, Block, BlockComponent, Provider } = getContext("sdk");
+  const { styleable, Block, BlockComponent, Provider, ContextScopes  } = getContext("sdk");
   const component = getContext("component");
 
   const formContext = getContext("form");
   const formStepContext = getContext("form-step");
   const labelPos = getContext("field-group");
   const labelWidth = getContext("field-group-label-width");
+  const groupDisabled = getContext("field-group-disabled");
   const formApi = formContext?.formApi;
 
   export let field;
@@ -66,7 +67,7 @@
   $: cellOptions = { 
       placeholder, 
       defaultValue,
-      disabled,
+      disabled: disabled || groupDisabled,
       template,
       suggestions,
       padding: "0.5rem",
@@ -113,7 +114,6 @@
       <label for="superCell"
         class="superlabel"
         style:flex-direction={labelPos == "left" ? "column" : "row"}
-
       >
         {label} 
         {#if fieldState.error}
@@ -136,13 +136,15 @@
           class="spectrum-ActionGroup spectrum-ActionGroup--compact spectrum-ActionGroup--sizeM"
           class:spectrum-ActionGroup--quiet={buttonsQuiet}
         >
-          <Provider data={ {value}} >
-            {#each buttons as { text, onClick }}
+          <Provider data={ {value}} scope={ContextScopes.Local}>
+            {#each buttons as { text, onClick, quiet }}
               <BlockComponent
                 type = "plugin/bb-component-SuperButton"
                 props = {{
                   size: "M",
                   text,
+                  quiet,
+                  disabled,
                   onClick
                 }}>
                 </BlockComponent>
