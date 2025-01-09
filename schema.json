@@ -25,13 +25,13 @@
         "type": "field/string",
         "label": "Field",
         "key": "field",
-        "defaultValue": "New Super Text Field"
+        "defaultValue": "Super Text Field"
       },
       {
         "type": "text",
         "label": "Label",
         "key": "label",
-        "defaultValue": "New Super Text Field",
+        "defaultValue": "Super Text Field",
         "resetOn": "field"
       },
       {
@@ -83,7 +83,7 @@
         "type": "select",
         "label": "Alignment",
         "key": "align",
-        "defaultValue": "left",
+        "defaultValue": "flex-start",
         "showInBar": true,
         "barStyle": "buttons",
         "options": [
