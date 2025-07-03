@@ -10,11 +10,10 @@
     "context": [
       {
         "type": "static",
-        "scope": "global",
         "values": [
           {
             "key": "value",
-            "label": "value",
+            "label": "Value",
             "type": "string"
           }
         ]
@@ -22,35 +21,45 @@
     ],
     "settings": [
       {
+        "type": "boolean",
+        "key": "inFieldGroup",
+        "label": "In Field Group",
+        "defaultValue": true
+      },
+      {
         "type": "field/string",
         "label": "Field",
         "key": "field",
-        "defaultValue": "Super Text Field"
+        "defaultValue": "Text Field"
       },
       {
         "type": "text",
         "label": "Label",
         "key": "label",
-        "defaultValue": "Super Text Field",
+        "placeholder": "Field Name",
         "resetOn": "field"
       },
       {
         "type": "text",
         "label": "Placeholder",
-        "key": "placeholder"
+        "key": "placeholder",
+        "placeholder": "Field Name",
+        "resetOn": "field"
       },
       {
         "type": "text",
         "label": "Default value",
         "key": "defaultValue",
-        "supportsConditions": false
+        "supportsConditions": false,
+        "resetOn": "field"
       },
       {
         "type": "text",
         "label": "Formatted value",
         "key": "template",
         "supportsConditions": false,
-        "nested": true
+        "nested": true,
+        "resetOn": "field"
       },
       {
         "type": "text",
@@ -208,23 +217,30 @@
         "defaultValue": 6,
         "showInBar": true,
         "barStyle": "buttons",
+        "dependsOn": "inFieldGroup",
         "options": [
           {
-            "label": "3 columns",
+            "label": "1 columns",
             "value": 2,
-            "barIcon": "ViewColumn",
+            "barIcon": "number-two",
             "barTitle": "3 columns"
           },
           {
             "label": "2 columns",
             "value": 3,
-            "barIcon": "ColumnTwoA",
+            "barIcon": "number-three",
+            "barTitle": "2 columns"
+          },
+          {
+            "label": "2 columns",
+            "value": 4,
+            "barIcon": "number-four",
             "barTitle": "2 columns"
           },
           {
             "label": "1 column",
             "value": 6,
-            "barIcon": "Stop",
+            "barIcon": "number-six",
             "barTitle": "1 column"
           },
           {

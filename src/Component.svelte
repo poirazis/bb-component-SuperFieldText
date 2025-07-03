@@ -1,26 +1,24 @@
 <script>
-  import { getContext, onDestroy } from "svelte";
-  import CellString from "../../bb_super_components_shared/src/lib/SuperTableCells/CellString.svelte";
-  import SuperButton from "../../bb_super_components_shared/src/lib/SuperButton/SuperButton.svelte";
-  import SuperFieldLabel from "../../bb_super_components_shared/src/lib/SuperFieldLabel/SuperFieldLabel.svelte";
-  import "../../bb_super_components_shared/src/lib/SuperTableCells/CellCommon.css";
-  import "../../bb_super_components_shared/src/lib/SuperFieldsCommon.css";
+  import { getContext, onDestroy, onMount } from "svelte";
+  import {
+    SuperButton,
+    SuperField,
+    CellString,
+  } from "@poirazis/supercomponents-shared";
 
-  const { styleable, enrichButtonActions, Provider } = getContext("sdk");
+  const { styleable, enrichButtonActions, Provider, builderStore } =
+    getContext("sdk");
   const component = getContext("component");
   const allContext = getContext("context");
 
-  const formContext = getContext("form");
+  const form = getContext("form");
   const formStepContext = getContext("form-step");
   const groupLabelPosition = getContext("field-group");
   const labelWidth = getContext("field-group-label-width");
   const groupColumns = getContext("field-group-columns");
   const groupDisabled = getContext("field-group-disabled");
-  const formApi = formContext?.formApi;
 
-  export let field;
-  export let buttons = [];
-
+  export let field = "Text Field";
   export let label;
   export let span = 6;
   export let placeholder;
@@ -31,6 +29,8 @@
   export let validation;
   export let helpText;
   export let align;
+  export let buttons = [];
+  export let inFieldGroup;
 
   export let onChange;
   export let debounced;
@@ -39,7 +39,7 @@
 
   export let icon;
 
-  export let role;
+  export let role = "formInput";
   export let labelPosition = "fieldGroup";
   export let showDirty;
 
@@ -48,16 +48,22 @@
   let fieldState;
   let fieldApi;
   let fieldSchema;
-  let value;
+  let value = defaultValue;
+  let unsubscribe;
+
+  $: unsubscribe = formField?.subscribe((value) => {
+    fieldState = value?.fieldState;
+    fieldApi = value?.fieldApi;
+    fieldSchema = value?.fieldSchema;
+  });
 
   $: formStep = formStepContext ? $formStepContext || 1 : 1;
-  $: labelPos = label
-    ? groupLabelPosition && labelPosition == "fieldGroup"
+  $: labelPos =
+    groupLabelPosition && labelPosition == "fieldGroup"
       ? groupLabelPosition
-      : labelPosition
-    : false;
+      : labelPosition;
 
-  $: formField = formApi?.registerField(
+  $: formField = form?.formApi.registerField(
     field,
     "string",
     defaultValue,
@@ -67,15 +73,20 @@
     formStep
   );
 
-  $: unsubscribe = formField?.subscribe((value) => {
-    fieldState = value?.fieldState;
-    fieldApi = value?.fieldApi;
-    fieldSchema = value?.fieldSchema;
-  });
-
   $: value = fieldState?.value ? fieldState.value : defaultValue;
+  $: error = fieldState?.error;
+  $: _inFieldGroup = groupColumns ? true : false;
+
+  $: if (
+    _inFieldGroup !== inFieldGroup &&
+    $component.selected &&
+    $builderStore.inBuilder
+  ) {
+    builderStore.actions.updateProp("inFieldGroup", _inFieldGroup);
+  }
+
   $: cellOptions = {
-    placeholder,
+    placeholder: placeholder || field,
     defaultValue,
     disabled: disabled || groupDisabled || fieldState?.disabled,
     template,
@@ -93,14 +104,23 @@
     normal: {
       ...$component.styles.normal,
       "grid-column": span < 7 ? "span " + span : "span " + groupColumns * 6,
+      flex: span > 6 ? "auto" : "none",
     },
   };
 
-  const handleChange = async (newValue) => {
-    value = newValue;
+  const handleChange = (newValue) => {
     fieldApi?.setValue(newValue);
-    await onChange?.({ value: newValue });
+    onChange?.({ value: newValue });
   };
+
+  onMount(() => {
+    if (form)
+      unsubscribe = formField?.subscribe((value) => {
+        fieldState = value?.fieldState;
+        fieldApi = value?.fieldApi;
+        fieldSchema = value?.fieldSchema;
+      });
+  });
 
   onDestroy(() => {
     fieldApi?.deregister();
@@ -114,36 +134,27 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div use:styleable={$component.styles}>
   <Provider data={{ value }} />
-  <div class="superField" class:left-label={labelPos == "left"}>
-    <SuperFieldLabel
-      {labelPos}
-      {labelWidth}
-      {label}
-      {helpText}
-      error={fieldState?.error}
+  <SuperField {labelPos} {labelWidth} {field} {label} {error} {helpText}>
+    <CellString
+      {cellOptions}
+      {value}
+      {fieldSchema}
+      {autofocus}
+      on:change={(e) => handleChange(e.detail)}
     />
-    <div class="inline-cells">
-      <CellString
-        {cellOptions}
-        {value}
-        {fieldSchema}
-        {autofocus}
-        on:change={(e) => handleChange(e.detail)}
-      />
-      {#if buttons?.length}
-        <div class="inline-buttons">
-          {#each buttons as { text, onClick, quiet, type, size }}
-            <SuperButton
-              {quiet}
-              {disabled}
-              {size}
-              {type}
-              {text}
-              on:click={enrichButtonActions(onClick, $allContext)}
-            />
-          {/each}
-        </div>
-      {/if}
-    </div>
-  </div>
+    {#if buttons?.length}
+      <div class="inline-buttons">
+        {#each buttons as { text, onClick, quiet, type, size }}
+          <SuperButton
+            {quiet}
+            {disabled}
+            {size}
+            {type}
+            {text}
+            on:click={enrichButtonActions(onClick, $allContext)}
+          />
+        {/each}
+      </div>
+    {/if}
+  </SuperField>
 </div>
