@@ -10,11 +10,10 @@
     "context": [
       {
         "type": "static",
-        "scope": "global",
         "values": [
           {
             "key": "value",
-            "label": "value",
+            "label": "Value",
             "type": "string"
           }
         ]
@@ -25,32 +24,36 @@
         "type": "field/string",
         "label": "Field",
         "key": "field",
-        "defaultValue": "New Super Text Field"
+        "defaultValue": "Text Field"
       },
       {
         "type": "text",
         "label": "Label",
         "key": "label",
-        "defaultValue": "New Super Text Field",
+        "placeholder": "Field Name",
         "resetOn": "field"
       },
       {
         "type": "text",
         "label": "Placeholder",
-        "key": "placeholder"
+        "key": "placeholder",
+        "placeholder": "Field Name",
+        "resetOn": "field"
       },
       {
         "type": "text",
         "label": "Default value",
         "key": "defaultValue",
-        "supportsConditions": false
+        "supportsConditions": false,
+        "resetOn": "field"
       },
       {
         "type": "text",
-        "label": "Formatted value",
+        "label": "Format value",
         "key": "template",
         "supportsConditions": false,
-        "nested": true
+        "nested": true,
+        "resetOn": "field"
       },
       {
         "type": "text",
@@ -83,7 +86,7 @@
         "type": "select",
         "label": "Alignment",
         "key": "align",
-        "defaultValue": "left",
+        "defaultValue": "flex-start",
         "showInBar": true,
         "barStyle": "buttons",
         "options": [
@@ -144,6 +147,12 @@
         }
       },
       {
+        "type": "boolean",
+        "key": "invisible",
+        "label": "Invisible",
+        "defaultValue": false
+      },
+      {
         "type": "icon",
         "key": "icon",
         "label": "Inline Icon"
@@ -202,45 +211,11 @@
       },
       {
         "tag": "style",
-        "type": "select",
-        "label": "Layout",
+        "type": "number",
+        "label": "Size",
         "key": "span",
         "defaultValue": 6,
-        "showInBar": true,
-        "barStyle": "buttons",
-        "options": [
-          {
-            "label": "3 columns",
-            "value": 2,
-            "barIcon": "ViewColumn",
-            "barTitle": "3 columns"
-          },
-          {
-            "label": "2 columns",
-            "value": 3,
-            "barIcon": "ColumnTwoA",
-            "barTitle": "2 columns"
-          },
-          {
-            "label": "1 column",
-            "value": 6,
-            "barIcon": "Stop",
-            "barTitle": "1 column"
-          },
-          {
-            "label": "Full Width",
-            "value": 12,
-            "barIcon": "Maximize",
-            "barTitle": "Full Width"
-          }
-        ]
-      },
-      {
-        "tag": "style",
-        "type": "boolean",
-        "key": "showDirty",
-        "label": "Show Dirty",
-        "defaultValue": false
+        "min": 2
       },
       {
         "tag": "style",
@@ -250,6 +225,13 @@
         "minValue": "200",
         "defaultValue": 750,
         "dependsOn": "debounced"
+      },
+      {
+        "tag": "style",
+        "type": "boolean",
+        "key": "showDirty",
+        "label": "Show Dirty",
+        "defaultValue": false
       }
     ]
   }
