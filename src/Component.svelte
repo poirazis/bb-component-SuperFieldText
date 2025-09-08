@@ -1,5 +1,5 @@
 <script>
-  import { getContext, onDestroy, onMount } from "svelte";
+  import { getContext, onDestroy } from "svelte";
   import {
     SuperButton,
     SuperField,
@@ -30,12 +30,12 @@
   export let helpText;
   export let align;
   export let buttons = [];
-  export let inFieldGroup;
 
   export let onChange;
   export let debounced;
   export let debounceDelay;
   export let autofocus;
+  export let invisible = false;
 
   export let icon;
 
@@ -50,6 +50,8 @@
   let fieldSchema;
   let value = defaultValue;
   let unsubscribe;
+
+  $: setDefaultValue(defaultValue);
 
   $: unsubscribe = formField?.subscribe((value) => {
     fieldState = value?.fieldState;
@@ -73,17 +75,8 @@
     formStep
   );
 
-  $: value = fieldState?.value ? fieldState.value : defaultValue;
   $: error = fieldState?.error;
-  $: _inFieldGroup = groupColumns ? true : false;
-
-  $: if (
-    _inFieldGroup !== inFieldGroup &&
-    $component.selected &&
-    $builderStore.inBuilder
-  ) {
-    builderStore.actions.updateProp("inFieldGroup", _inFieldGroup);
-  }
+  $: value = fieldState?.value;
 
   $: cellOptions = {
     placeholder: placeholder || field,
@@ -103,24 +96,21 @@
     ...$component.styles,
     normal: {
       ...$component.styles.normal,
-      "grid-column": span < 7 ? "span " + span : "span " + groupColumns * 6,
-      flex: span > 6 ? "auto" : "none",
+      display: invisible && !$builderStore.inBuilder ? "none" : "block",
+      opacity: invisible && $builderStore.inBuilder ? 0.6 : 1,
+      "grid-column": groupColumns ? `span ${span}` : "unset",
     },
   };
 
   const handleChange = (newValue) => {
+    if (!form) value = newValue;
     fieldApi?.setValue(newValue);
     onChange?.({ value: newValue });
   };
 
-  onMount(() => {
-    if (form)
-      unsubscribe = formField?.subscribe((value) => {
-        fieldState = value?.fieldState;
-        fieldApi = value?.fieldApi;
-        fieldSchema = value?.fieldSchema;
-      });
-  });
+  const setDefaultValue = (val) => {
+    value = val;
+  };
 
   onDestroy(() => {
     fieldApi?.deregister();
@@ -132,7 +122,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div use:styleable={$component.styles}>
+<div use:styleable={$component.styles} class:invisible>
   <Provider data={{ value }} />
   <SuperField {labelPos} {labelWidth} {field} {label} {error} {helpText}>
     <CellString
@@ -144,13 +134,14 @@
     />
     {#if buttons?.length}
       <div class="inline-buttons">
-        {#each buttons as { text, onClick, quiet, type, size }}
+        {#each buttons as { text, onClick, quiet, type, size, icon }}
           <SuperButton
             {quiet}
             {disabled}
             {size}
             {type}
             {text}
+            {icon}
             on:click={enrichButtonActions(onClick, $allContext)}
           />
         {/each}
