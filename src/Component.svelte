@@ -43,6 +43,8 @@
   export let labelPosition = "fieldGroup";
   export let showDirty;
 
+  export let controlType;
+
   let formField;
   let formStep;
   let fieldState;
@@ -77,6 +79,9 @@
 
   $: error = fieldState?.error;
   $: value = fieldState?.value;
+  $: fieldSchema?.type == "longform" && !controlType
+    ? (controlType = "textarea")
+    : (controlType = controlType);
 
   $: cellOptions = {
     placeholder: placeholder || field,
@@ -90,6 +95,7 @@
     error: fieldState?.error,
     role,
     showDirty,
+    controlType,
   };
 
   $: $component.styles = {
@@ -99,8 +105,14 @@
       display: invisible && !$builderStore.inBuilder ? "none" : "block",
       opacity: invisible && $builderStore.inBuilder ? 0.6 : 1,
       "grid-column": groupColumns ? `span ${span}` : "unset",
+      "grid-row": controlType == "textarea" ? "span 2" : "span 1",
+      overflow: "hidden",
     },
   };
+
+  $: height =
+    $component.styles.normal.height ||
+    (controlType == "textarea" ? "8rem" : null);
 
   const handleChange = (newValue) => {
     if (!form) value = newValue;
@@ -124,7 +136,17 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div use:styleable={$component.styles} class:invisible>
   <Provider data={{ value }} />
-  <SuperField {labelPos} {labelWidth} {field} {label} {error} {helpText}>
+  <SuperField
+    multirow={controlType == "textarea"}
+    tall={controlType == "textarea"}
+    {height}
+    {labelPos}
+    {labelWidth}
+    {field}
+    {label}
+    {error}
+    {helpText}
+  >
     <CellString
       {cellOptions}
       {value}
@@ -141,7 +163,7 @@
             {size}
             {type}
             {text}
-            {icon}
+            icon={"ph ph-" + icon}
             on:click={enrichButtonActions(onClick, $allContext)}
           />
         {/each}

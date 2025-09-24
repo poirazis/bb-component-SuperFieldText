@@ -61,12 +61,6 @@
         "key": "helpText"
       },
       {
-        "type": "text",
-        "label": "Input Mask",
-        "key": "mask",
-        "hidden": true
-      },
-      {
         "type": "validation/string",
         "label": "Validation",
         "key": "validation"
@@ -80,6 +74,16 @@
             "label": "value",
             "key": "value"
           }
+        ]
+      },
+      {
+        "type": "select",
+        "key": "controlType",
+        "label": "Control Type",
+        "defaultValue": "input",
+        "options": [
+          { "label": "Input", "value": "input" },
+          { "label": "Textarea", "value": "textarea" }
         ]
       },
       {
