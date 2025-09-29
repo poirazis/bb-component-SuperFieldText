@@ -128,8 +128,6 @@
     fieldApi?.deregister();
     unsubscribe?.();
   });
-
-  $: console.log("height", height);
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
