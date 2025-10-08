@@ -101,6 +101,7 @@
   $: $component.styles = {
     ...$component.styles,
     normal: {
+      height: controlType == "textarea" ? "8rem" : undefined,
       ...$component.styles.normal,
       display: invisible && !$builderStore.inBuilder ? "none" : "block",
       opacity: invisible && $builderStore.inBuilder ? 0.6 : 1,
@@ -109,10 +110,6 @@
       overflow: "hidden",
     },
   };
-
-  $: height =
-    $component.styles.normal.height ||
-    (controlType == "textarea" ? "8rem" : null);
 
   const handleChange = (newValue) => {
     if (!form) value = newValue;
@@ -137,9 +134,7 @@
 <div use:styleable={$component.styles} class:invisible>
   <Provider data={{ value }} />
   <SuperField
-    multirow={controlType == "textarea"}
     tall={controlType == "textarea"}
-    {height}
     {labelPos}
     {labelWidth}
     {field}
