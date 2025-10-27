@@ -159,7 +159,7 @@
             {type}
             {text}
             icon={"ph ph-" + icon}
-            on:click={enrichButtonActions(onClick, $allContext)}
+            onClick={enrichButtonActions(onClick, $allContext)}
           />
         {/each}
       </div>
