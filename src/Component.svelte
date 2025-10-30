@@ -103,8 +103,6 @@
     normal: {
       height: controlType == "textarea" ? "8rem" : undefined,
       ...$component.styles.normal,
-      display: invisible && !$builderStore.inBuilder ? "none" : "block",
-      opacity: invisible && $builderStore.inBuilder ? 0.6 : 1,
       "grid-column": groupColumns ? `span ${span}` : "unset",
       "grid-row": controlType == "textarea" ? "span 2" : "span 1",
       overflow: "hidden",
@@ -131,7 +129,11 @@
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div use:styleable={$component.styles} class:invisible>
+<div
+  use:styleable={$component.styles}
+  class:invisible
+  class:inBuilder={$builderStore.inBuilder}
+>
   <Provider data={{ value }} />
   <SuperField
     tall={controlType == "textarea"}
@@ -166,3 +168,14 @@
     {/if}
   </SuperField>
 </div>
+
+<style>
+  .invisible {
+    display: none;
+  }
+
+  .invisible.inBuilder {
+    display: block;
+    opacity: 0.6;
+  }
+</style>
