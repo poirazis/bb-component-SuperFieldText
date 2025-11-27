@@ -101,10 +101,14 @@
   $: $component.styles = {
     ...$component.styles,
     normal: {
-      height: controlType == "textarea" ? "8rem" : undefined,
       ...$component.styles.normal,
       "grid-column": groupColumns ? `span ${span}` : "unset",
-      "grid-row": controlType == "textarea" ? "span 2" : "span 1",
+      "grid-row":
+        controlType == "textarea"
+          ? labelPosition == "left"
+            ? "span 3"
+            : "span 2"
+          : "span 1",
       overflow: "hidden",
     },
   };
@@ -137,6 +141,7 @@
   <Provider data={{ value }} />
   <SuperField
     tall={controlType == "textarea"}
+    multirow={controlType == "textarea"}
     {labelPos}
     {labelWidth}
     {field}
