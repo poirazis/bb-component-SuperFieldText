@@ -6,8 +6,13 @@
     CellString,
   } from "@poirazis/supercomponents-shared";
 
-  const { styleable, enrichButtonActions, Provider, builderStore } =
-    getContext("sdk");
+  const {
+    styleable,
+    enrichButtonActions,
+    Provider,
+    builderStore,
+    processStringSync,
+  } = getContext("sdk");
   const component = getContext("component");
   const allContext = getContext("context");
 
@@ -63,7 +68,7 @@
 
   $: formStep = formStepContext ? $formStepContext || 1 : 1;
   $: labelPos =
-    groupLabelPosition && labelPosition == "fieldGroup"
+    groupLabelPosition !== undefined && labelPosition == "fieldGroup"
       ? groupLabelPosition
       : labelPosition;
 
@@ -89,7 +94,7 @@
     disabled: disabled || groupDisabled || fieldState?.disabled,
     template,
     readonly: readonly || fieldState?.readonly,
-    icon,
+    icon: icon ? "ph ph-" + icon : undefined,
     debounce: debounced ? debounceDelay : false,
     align,
     error: fieldState?.error,
@@ -106,7 +111,7 @@
       "grid-row":
         controlType == "textarea"
           ? labelPosition == "left"
-            ? "span 3"
+            ? "span 2"
             : "span 2"
           : "span 1",
       overflow: "hidden",
@@ -116,7 +121,7 @@
   const handleChange = (newValue) => {
     if (!form) value = newValue;
     fieldApi?.setValue(newValue);
-    onChange?.({ value: newValue });
+    onChange?.();
   };
 
   const setDefaultValue = (val) => {
@@ -142,6 +147,11 @@
   <SuperField
     tall={controlType == "textarea"}
     multirow={controlType == "textarea"}
+    height={controlType == "textarea" && labelPos == "above"
+      ? "7.5rem"
+      : controlType == "textarea"
+        ? "4rem"
+        : "auto"}
     {labelPos}
     {labelWidth}
     {field}
@@ -158,14 +168,17 @@
     />
     {#if buttons?.length}
       <div class="inline-buttons">
-        {#each buttons as { text, onClick, quiet, type, size, icon }}
+        {#each buttons as { icon, onClick, ...rest }}
           <SuperButton
-            {quiet}
-            {disabled}
-            {size}
-            {type}
-            {text}
+            {...rest}
             icon={"ph ph-" + icon}
+            disabled={processStringSync(
+              rest.disabledTemplate ?? "",
+              $allContext
+            ) === true ||
+              disabled ||
+              groupDisabled ||
+              fieldState?.disabled}
             onClick={enrichButtonActions(onClick, $allContext)}
           />
         {/each}

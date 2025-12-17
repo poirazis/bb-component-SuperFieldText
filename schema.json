@@ -69,12 +69,7 @@
         "type": "event",
         "label": "On change",
         "key": "onChange",
-        "context": [
-          {
-            "label": "value",
-            "key": "value"
-          }
-        ]
+        "nested": true
       },
       {
         "type": "select",
@@ -128,13 +123,6 @@
       },
       {
         "type": "boolean",
-        "label": "Suggestions",
-        "key": "showSuggestions",
-        "hidden": true,
-        "defaultValue": false
-      },
-      {
-        "type": "boolean",
         "label": "Disabled",
         "key": "disabled",
         "defaultValue": false
@@ -151,32 +139,16 @@
         }
       },
       {
-        "type": "boolean",
-        "key": "invisible",
-        "label": "Invisible",
-        "defaultValue": false
-      },
-      {
-        "type": "icon",
+        "type": "phosphorIcon",
         "key": "icon",
         "label": "Inline Icon"
       },
       {
-        "type": "buttonConfiguration",
+        "type": "componentConfiguration",
+        "componentType": "plugin/bb-component-SuperButton",
         "key": "buttons",
         "nested": true,
         "wide": true
-      },
-      {
-        "tag": "style",
-        "type": "select",
-        "key": "role",
-        "label": "Field Mode",
-        "defaultValue": "formInput",
-        "options": [
-          { "label": "Form Input", "value": "formInput" },
-          { "label": "Inline Input", "value": "inlineInput" }
-        ]
       },
       {
         "tag": "style",
@@ -215,6 +187,17 @@
       },
       {
         "tag": "style",
+        "type": "select",
+        "key": "role",
+        "label": "Field Mode",
+        "defaultValue": "formInput",
+        "options": [
+          { "label": "Form Input", "value": "formInput" },
+          { "label": "Inline Input", "value": "inlineInput" }
+        ]
+      },
+      {
+        "tag": "style",
         "type": "number",
         "label": "Size",
         "key": "span",
@@ -235,6 +218,13 @@
         "type": "boolean",
         "key": "showDirty",
         "label": "Show Dirty",
+        "defaultValue": false
+      },
+      {
+        "tag": "style",
+        "type": "boolean",
+        "key": "invisible",
+        "label": "Invisible",
         "defaultValue": false
       }
     ]
