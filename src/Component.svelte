@@ -171,7 +171,7 @@
         {#each buttons as { icon, onClick, ...rest }}
           <SuperButton
             {...rest}
-            icon={"ph ph-" + icon}
+            icon={icon ? "ph ph-" + icon : undefined}
             disabled={processStringSync(
               rest.disabledTemplate ?? "",
               $allContext
@@ -195,5 +195,11 @@
   .invisible.inBuilder {
     display: block;
     opacity: 0.6;
+  }
+
+  .inline-buttons {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 0.35rem;
   }
 </style>
