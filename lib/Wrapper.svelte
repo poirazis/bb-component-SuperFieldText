@@ -1,5 +1,5 @@
 <script>
-  import Component from "../src/Component.svelte"
+  import Component from "../src/Component.svelte";
 </script>
 
 <svelte:boundary>
@@ -12,6 +12,11 @@
 </svelte:boundary>
 
 <style>
-  .plugin-error { color: var(--spectrum-global-color-red-500); font-size: 0.9em }
-  .plugin-error:empty { display: none }
+  .plugin-error {
+    color: var(--spectrum-global-color-red-500);
+    font-size: 0.9em;
+  }
+  .plugin-error:empty {
+    display: none;
+  }
 </style>
