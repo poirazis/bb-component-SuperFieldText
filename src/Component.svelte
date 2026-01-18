@@ -70,7 +70,9 @@
   $: labelPos =
     groupLabelPosition !== undefined && labelPosition == "fieldGroup"
       ? groupLabelPosition
-      : labelPosition;
+      : labelPosition == "fieldGroup"
+        ? "above"
+        : labelPosition;
 
   $: formField = form?.formApi.registerField(
     field,
